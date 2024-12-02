@@ -33,6 +33,7 @@
 					<p></p>
 						<div class="checkbox-container">
 						<label>활동 선택</label>
+						<form id="optionsForm">
 							<label class="checkbox-button">
 								<input type="checkbox" name="option1" value="Option 1">
 								<span>Option 1</span>
@@ -45,17 +46,18 @@
 								<input type="checkbox" name="option3" value="Option 3">
 								<span>Option 3</span>
 							</label>
+						</form>
 						</div>
-						<a href="#" class="button primary" id="gyeonggi button">지역 추천 보기</a>
+						<button class="button primary" id="gyeonggi_button">지역 추천 보기</button>
 				</div>
+				<div style="display:none" id="regioninfo">gyeonggi</div>
+				<div class="inner" style="display:none" id="results">Loading...</div>
 			</div>
-			
 			<!-- Footer -->
-			
 		</div>
 		
 		<!-- Scripts -->
-		<script src="dbtp.js" defer></script>
+		<script src="dbtp.js"></script>
 		<script src="assets/js/jquery.min.js"></script>
 		<script src="assets/js/browser.min.js"></script>
 		<script src="assets/js/breakpoints.min.js"></script>
