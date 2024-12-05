@@ -36,15 +36,24 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 var _this = this;
 function getCurrentDate() {
-    var now = new Date();
-    // 연도, 월, 일 가져오기
-    var year = now.getFullYear();
-    var month = String(now.getMonth() + 1).padStart(2, "0"); // 월은 0부터 시작하므로 +1
-    var day = String(now.getDate()).padStart(2, "0");
+    var today = new Date();
+    return formatDate(today);
+}
+function getTwoWeeksFromNow() {
+    var today = new Date();
+    today.setDate(today.getDate() + 14); // 2주(14일) 추가
+    return formatDate(today);
+}
+function formatDate(date) {
+    var year = date.getFullYear();
+    var month = (date.getMonth() + 1).toString().padStart(2, '0'); // 월은 0부터 시작
+    var day = date.getDate().toString().padStart(2, '0');
     return "".concat(year, "-").concat(month, "-").concat(day);
 }
 var dat = document.getElementById("styledDateInput");
 dat.value = getCurrentDate();
+dat.min = getCurrentDate();
+dat.max = getTwoWeeksFromNow();
 function getOptionsAsJson(formId) {
     var form = document.getElementById(formId);
     if (!form) {
@@ -87,6 +96,33 @@ function postData(url, data) {
         });
     });
 }
+var MAX_SELECTION = 3;
+// HTML 요소 선택
+var form = document.getElementById('optionsForm');
+// 폼 내부의 모든 체크박스 선택
+var checkboxes = form.querySelectorAll('input[type="checkbox"]');
+// 이벤트 리스너 추가
+checkboxes.forEach(function (checkbox) {
+    checkbox.addEventListener('change', function () {
+        // 현재 체크된 체크박스 개수 계산
+        var checkedCount = Array.from(checkboxes).filter(function (cb) { return cb.checked; }).length;
+        // 제한을 초과하면 현재 변경된 체크박스 체크를 해제
+        if (checkedCount > MAX_SELECTION) {
+            checkbox.checked = false;
+            alert("\uD65C\uB3D9\uC740 ".concat(MAX_SELECTION, "\uAC1C\uAE4C\uC9C0 \uC120\uD0DD\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4."));
+        }
+    });
+});
+// 버튼 클릭 시 선택된 값을 가져오기 위한 이벤트 리스너 추가
+function getCheckedValues() {
+    // form 내부의 모든 체크박스를 선택
+    var checkboxes = form.querySelectorAll('input[type="checkbox"]');
+    // 체크된 항목만 필터링하여 값(value) 배열 반환
+    var selectedValues = Array.from(checkboxes)
+        .filter(function (checkbox) { return checkbox.checked; }) // 체크된 항목 필터링
+        .map(function (checkbox) { return checkbox.value; }); // value 값 추출
+    return selectedValues;
+}
 document.addEventListener('DOMContentLoaded', function () {
     var form = document.getElementById('gyeonggi_button');
     form.addEventListener('click', function (event) { return __awaiter(_this, void 0, void 0, function () {
@@ -97,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 case 0:
                     event.preventDefault(); // 폼의 기본 제출 동작을 막음
                     dateInput = document.getElementById('styledDateInput');
-                    optionsJson = getOptionsAsJson('optionsForm');
+                    optionsJson = getCheckedValues();
                     regionInput = (_a = document.getElementById('regioninfo')) === null || _a === void 0 ? void 0 : _a.innerText;
                     formData = {
                         region: regionInput,

@@ -1,15 +1,26 @@
 function getCurrentDate(): string {
-    const now = new Date();
+    const today = new Date();
+    return formatDate(today);
+}
 
-    // 연도, 월, 일 가져오기
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, "0"); // 월은 0부터 시작하므로 +1
-    const day = String(now.getDate()).padStart(2, "0");
+function getTwoWeeksFromNow(): string {
+    const today = new Date();
+    today.setDate(today.getDate() + 14); // 2주(14일) 추가
+    return formatDate(today);
+}
 
+function formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // 월은 0부터 시작
+    const day = date.getDate().toString().padStart(2, '0');
     return `${year}-${month}-${day}`;
 }
+
 const dat = document.getElementById("styledDateInput") as HTMLInputElement
 dat.value = getCurrentDate();
+dat.min = getCurrentDate();
+dat.max = getTwoWeeksFromNow();
+
 
 function getOptionsAsJson(formId: string): Record<string, boolean> {
     const form = document.getElementById(formId) as HTMLFormElement;
@@ -49,6 +60,41 @@ async function postData(url: string, data: Record<string, any>): Promise<any> {
     }
 }
 
+const MAX_SELECTION = 3;
+
+// HTML 요소 선택
+const form = document.getElementById('optionsForm') as HTMLFormElement;
+
+// 폼 내부의 모든 체크박스 선택
+const checkboxes = form.querySelectorAll<HTMLInputElement>('input[type="checkbox"]');
+
+// 이벤트 리스너 추가
+checkboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', () => {
+        // 현재 체크된 체크박스 개수 계산
+        const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+
+        // 제한을 초과하면 현재 변경된 체크박스 체크를 해제
+        if (checkedCount > MAX_SELECTION) {
+            checkbox.checked = false;
+            alert(`활동은 ${MAX_SELECTION}개까지 선택할 수 있습니다.`);
+        }
+    });
+});
+
+
+// 버튼 클릭 시 선택된 값을 가져오기 위한 이벤트 리스너 추가
+function getCheckedValues(): string[] {
+    // form 내부의 모든 체크박스를 선택
+    const checkboxes = form.querySelectorAll<HTMLInputElement>('input[type="checkbox"]');
+
+    // 체크된 항목만 필터링하여 값(value) 배열 반환
+    const selectedValues = Array.from(checkboxes)
+        .filter(checkbox => checkbox.checked) // 체크된 항목 필터링
+        .map(checkbox => checkbox.value);    // value 값 추출
+
+    return selectedValues;
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('gyeonggi_button') as HTMLInputElement;
@@ -57,7 +103,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // HTML 요소에서 데이터를 추출
         const dateInput = document.getElementById('styledDateInput') as HTMLInputElement;
-        const optionsJson = getOptionsAsJson('optionsForm');
+        // const optionsJson = getOptionsAsJson('optionsForm');
+        const optionsJson = getCheckedValues();
         const regionInput = document.getElementById('regioninfo')?.innerText;
         const formData = {
             region: regionInput,
@@ -99,7 +146,7 @@ async function fetchJsonData(url: string): Promise<any[]> {
 function renderList(containerId: string, data: any[]): void {
     const container = document.getElementById(containerId);
     const div = document.getElementById(containerId) as HTMLDivElement;
-    div.style.display = "block"; 
+    div.style.display = "block";
     if (!container) {
         throw new Error(`Container with ID "${containerId}" not found`);
     }
