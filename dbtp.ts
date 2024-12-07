@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         console.log('Form Data:', formData);
-        const apiUrl = 'https://jsonplaceholder.typicode.com/posts'; // POST 요청을 보낼 API 엔드포인트
+        const apiUrl = 'http://localhost:3000/recommend'; // POST 요청을 보낼 API 엔드포인트
 
         try {
             const response = postData(apiUrl, formData);
@@ -121,7 +121,8 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Data submitted successfully!');
             const data = await fetchJsonData(apiUrl);
             alert('fetched');
-            renderList("results", data.map((item) => item.title));
+            console.log(data);
+            renderList("results", data);
         } catch (error) {
             alert('Failed to submit data. Check console for details.');
         }
@@ -144,12 +145,17 @@ async function fetchJsonData(url: string): Promise<any[]> {
 }
 
 interface Item {
-    city_id: number;
-    activity_id: number;
+    city_name: number;
+    activity_name: number;
     name: string;
+    rank: string;
 }
 
-function renderList(containerId: string, data: Item[]): void {
+interface ApiResponse{
+    results: {[key:string]: Item};
+}
+
+function renderList(containerId: string, json: ApiResponse): void {
     const container = document.getElementById(containerId);
     const div = document.getElementById(containerId) as HTMLDivElement;
 
@@ -162,7 +168,7 @@ function renderList(containerId: string, data: Item[]): void {
 
     // 기존 내용을 지움
     container.innerHTML = '';
-
+    const data = Object.values(json.results);
     if (data.length === 0) {
         container.innerHTML = '<p>No items to display</p>';
         return;
@@ -174,7 +180,7 @@ function renderList(containerId: string, data: Item[]): void {
         const listItem = document.createElement('li');
         
         // 각 항목의 데이터를 가독성 있게 렌더링
-        listItem.textContent = `City ID: ${item.city_id}, Activity ID: ${item.activity_id}, Name: ${item.name}`;
+        listItem.textContent = `추천하는 도시: ${item.city_name}, 가능한 활동 ${item.activity_name}`;
         
         list.appendChild(listItem);
     });
