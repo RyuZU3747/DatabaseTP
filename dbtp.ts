@@ -147,15 +147,10 @@ async function fetchJsonData(url: string): Promise<any[]> {
 interface Item {
     city_name: number;
     activity_name: number;
-    name: string;
-    rank: string;
 }
 
-interface ApiResponse{
-    results: {[key:string]: Item};
-}
 
-function renderList(containerId: string, json: ApiResponse): void {
+function renderList(containerId: string, json: Promise): void {
     const container = document.getElementById(containerId);
     const div = document.getElementById(containerId) as HTMLDivElement;
 
@@ -170,7 +165,7 @@ function renderList(containerId: string, json: ApiResponse): void {
     container.innerHTML = '';
     const data = Object.values(json.results);
     if (data.length === 0) {
-        container.innerHTML = '<p>No items to display</p>';
+        container.innerHTML = '<p>추천 도시가 없습니다.</p>';
         return;
     }
 

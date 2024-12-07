@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         activity: optionsJson,
                     };
                     console.log('Form Data:', formData);
-                    apiUrl = 'https://jsonplaceholder.typicode.com/posts';
+                    apiUrl = 'http://localhost:3000/recommend';
                     _b.label = 1;
                 case 1:
                     _b.trys.push([1, 3, , 4]);
@@ -152,7 +152,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 case 2:
                     data = _b.sent();
                     alert('fetched');
-                    renderList("results", data.map(function (item) { return item.title; }));
+                    console.log(data);
+                    renderList("results", data);
                     return [3 /*break*/, 4];
                 case 3:
                     error_2 = _b.sent();
@@ -187,7 +188,7 @@ function fetchJsonData(url) {
         });
     });
 }
-function renderList(containerId, data) {
+function renderList(containerId, json) {
     var container = document.getElementById(containerId);
     var div = document.getElementById(containerId);
     if (!container) {
@@ -197,8 +198,9 @@ function renderList(containerId, data) {
     div.style.display = "block";
     // 기존 내용을 지움
     container.innerHTML = '';
+    var data = Object.values(json.results);
     if (data.length === 0) {
-        container.innerHTML = '<p>No items to display</p>';
+        container.innerHTML = '<p>추천 도시가 없습니다.</p>';
         return;
     }
     // 리스트 생성
@@ -206,7 +208,7 @@ function renderList(containerId, data) {
     data.forEach(function (item) {
         var listItem = document.createElement('li');
         // 각 항목의 데이터를 가독성 있게 렌더링
-        listItem.textContent = "City ID: ".concat(item.city_id, ", Activity ID: ").concat(item.activity_id, ", Name: ").concat(item.name);
+        listItem.textContent = "\uCD94\uCC9C\uD558\uB294 \uB3C4\uC2DC: ".concat(item.city_name, ", \uAC00\uB2A5\uD55C \uD65C\uB3D9 ").concat(item.activity_name);
         list.appendChild(listItem);
     });
     container.appendChild(list);
