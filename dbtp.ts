@@ -5,7 +5,7 @@ function getCurrentDate(): string {
 
 function getTwoWeeksFromNow(): string {
     const today = new Date();
-    today.setDate(today.getDate() + 14); // 2주(14일) 추가
+    today.setDate(today.getDate() + 10); // 2주(14일) 추가
     return formatDate(today);
 }
 
@@ -143,13 +143,22 @@ async function fetchJsonData(url: string): Promise<any[]> {
     }
 }
 
-function renderList(containerId: string, data: any[]): void {
+interface Item {
+    city_id: number;
+    activity_id: number;
+    name: string;
+}
+
+function renderList(containerId: string, data: Item[]): void {
     const container = document.getElementById(containerId);
     const div = document.getElementById(containerId) as HTMLDivElement;
-    div.style.display = "block";
+
     if (!container) {
         throw new Error(`Container with ID "${containerId}" not found`);
     }
+
+    // 블록 스타일 설정
+    div.style.display = "block";
 
     // 기존 내용을 지움
     container.innerHTML = '';
@@ -163,9 +172,40 @@ function renderList(containerId: string, data: any[]): void {
     const list = document.createElement('ul');
     data.forEach((item) => {
         const listItem = document.createElement('li');
-        listItem.textContent = typeof item === 'string' ? item : JSON.stringify(item);
+        
+        // 각 항목의 데이터를 가독성 있게 렌더링
+        listItem.textContent = `City ID: ${item.city_id}, Activity ID: ${item.activity_id}, Name: ${item.name}`;
+        
         list.appendChild(listItem);
     });
 
     container.appendChild(list);
 }
+
+
+// function renderList(containerId: string, data: any[]): void {
+//     const container = document.getElementById(containerId);
+//     const div = document.getElementById(containerId) as HTMLDivElement;
+//     div.style.display = "block";
+//     if (!container) {
+//         throw new Error(`Container with ID "${containerId}" not found`);
+//     }
+
+//     // 기존 내용을 지움
+//     container.innerHTML = '';
+
+//     if (data.length === 0) {
+//         container.innerHTML = '<p>No items to display</p>';
+//         return;
+//     }
+
+//     // 리스트 생성
+//     const list = document.createElement('ul');
+//     data.forEach((item) => {
+//         const listItem = document.createElement('li');
+//         listItem.textContent = typeof item === 'string' ? item : JSON.stringify(item);
+//         list.appendChild(listItem);
+//     });
+
+//     container.appendChild(list);
+// }
